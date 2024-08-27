@@ -1,7 +1,5 @@
 from pydantic import BaseModel
 
-from llm_chatbot_api.src.llm_chatbot_api.db.schema import Chat
-
 
 class InvokeChatbotRequest(BaseModel):
     user_id: str
@@ -12,6 +10,16 @@ class InvokeChatbotResponse(BaseModel):
     user_id: str
     chat_id: str
     llm_message: str
+
+class Message(BaseModel):
+    chat_id: str
+    role: str
+    content: str
+
+class Chat(BaseModel):
+    chat_id: str
+    chat_name: str
+    messages: list[Message]
 
 class ChatsRequest(BaseModel):
     user_id: str

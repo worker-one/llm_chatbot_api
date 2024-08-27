@@ -3,7 +3,7 @@ import uvicorn
 from fastapi import FastAPI
 from omegaconf import OmegaConf
 
-from llm_chatbot_api.api.endpoint import *
+from llm_chatbot_api.api.endpoints import chats, users, invoke
 
 
 # Set up logging

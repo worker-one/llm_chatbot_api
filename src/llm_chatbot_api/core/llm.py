@@ -6,7 +6,7 @@ from omegaconf import OmegaConf
 from llm_chatbot_api.db.models import Message
 
 # Load logging configuration with OmegaConf
-logging_config = OmegaConf.to_container(OmegaConf.load("src/llm_normalizer/conf/logging_config.yaml"), resolve=True)
+logging_config = OmegaConf.to_container(OmegaConf.load("src/llm_chatbot_api/conf/logging_config.yaml"), resolve=True)
 
 # Apply the logging configuration
 logging.config.dictConfig(logging_config)

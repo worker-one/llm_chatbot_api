@@ -1,7 +1,7 @@
 import logging.config
 import os
 
-from dotenv import load_dotenv, find_dotenv
+from dotenv import find_dotenv, load_dotenv
 from omegaconf import OmegaConf
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from .models import Base
 
 # Load logging configuration with OmegaConf
-logging_config = OmegaConf.to_container(OmegaConf.load("./src/telegram_bot/conf/logging_config.yaml"), resolve=True)
+logging_config = OmegaConf.to_container(OmegaConf.load("./src/llm_chatbot_api/conf/logging_config.yaml"), resolve=True)
 
 # Apply the logging configuration
 logging.config.dictConfig(logging_config)

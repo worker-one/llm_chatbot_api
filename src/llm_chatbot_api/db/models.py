@@ -5,14 +5,14 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = 'users_chatbot'
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
     chats = relationship("Chat", back_populates="user")
 
 class Chat(Base):
-    __tablename__ = 'chats'
+    __tablename__ = 'chats_chatbot'
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
@@ -21,7 +21,7 @@ class Chat(Base):
     user = relationship("User", back_populates="chats")
 
 class Message(Base):
-    __tablename__ = 'messages'
+    __tablename__ = 'messages_chatbot'
 
     id = Column(Integer, primary_key=True, index=True)
     chat_id = Column(Integer, ForeignKey("chats.id"))
