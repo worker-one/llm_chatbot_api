@@ -9,7 +9,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
-    chats = relationship("Chat", back_populates="user")
+    chats = relationship("Chat", back_populates="users_chatbot")
 
 class Chat(Base):
     __tablename__ = 'chats_chatbot'
@@ -18,7 +18,7 @@ class Chat(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     name = Column(String)
     timestamp = Column(DateTime)
-    user = relationship("User", back_populates="chats")
+    user = relationship("User", back_populates="chats_chatbot")
 
 class Message(Base):
     __tablename__ = 'messages_chatbot'
@@ -28,4 +28,4 @@ class Message(Base):
     role = Column(String)
     content = Column(String)
     timestamp = Column(DateTime)
-    chat = relationship("Chat", back_populates="messages")
+    chat = relationship("Chat", back_populates="messages_chatbot")

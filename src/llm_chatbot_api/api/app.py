@@ -5,6 +5,7 @@ from omegaconf import OmegaConf
 
 from llm_chatbot_api.api.endpoints import chats, users, invoke
 
+from llm_chatbot_api.db.database import create_tables
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -38,6 +39,7 @@ def create_app(config_path: str = "src/text_classification/conf/config.yaml") ->
 if __name__ == "__main__":
     config_path = "src/llm_chatbot_api/conf/config.yaml"
     config = OmegaConf.load(config_path)
+    create_tables()
     app = create_app(config_path)
     logger.info("Starting the API server...")
     uvicorn.run(app, host=config.api.host, port=config.api.port)
