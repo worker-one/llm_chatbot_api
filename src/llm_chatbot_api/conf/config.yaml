@@ -1,0 +1,6 @@
+api:
+    version: "1.0.0"
+    title: "LLM Chatbot API"
+    description: "API for interaction with llm chatbot"
+    host: "0.0.0.0"
+    port: 8000

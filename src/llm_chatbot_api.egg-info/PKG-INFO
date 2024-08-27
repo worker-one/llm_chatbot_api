@@ -1,0 +1,36 @@
+Metadata-Version: 2.1
+Name: llm_chatbot_api
+Version: 0.0.0
+Summary: REST API interface for LLM Chatbot
+Author: Konstantin Verner
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Description-Content-Type: text/markdown
+Requires-Dist: uvicorn
+Requires-Dist: fastapi
+Requires-Dist: omegaconf
+Requires-Dist: fireworks-ai
+Requires-Dist: sqlalchemy==1.4.25
+Requires-Dist: psycopg2-binary
+Requires-Dist: python-dotenv
+Provides-Extra: all
+Requires-Dist: pytest; extra == "all"
+Requires-Dist: mypy; extra == "all"
+Requires-Dist: ruff; extra == "all"
+Requires-Dist: pre-commit; extra == "all"
+Requires-Dist: mkdocs-material; extra == "all"
+Requires-Dist: mkdocstrings[python]; extra == "all"
+Provides-Extra: test
+Requires-Dist: pytest; extra == "test"
+Provides-Extra: docs
+Requires-Dist: mkdocs-material; extra == "docs"
+Requires-Dist: mkdocstrings[python]; extra == "docs"
+Provides-Extra: mypy
+Requires-Dist: mypy; extra == "mypy"
+Provides-Extra: ruff
+Requires-Dist: ruff; extra == "ruff"
+
+# llm_chatbot_api
