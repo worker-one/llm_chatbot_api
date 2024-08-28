@@ -4,17 +4,12 @@ from fastapi import FastAPI
 from omegaconf import OmegaConf
 
 from llm_chatbot_api.api.endpoints import chats, users, invoke
-
 from llm_chatbot_api.db.database import create_tables
 
-# Set up logging
+# Load logging configuration with OmegaConf
+logging_config = OmegaConf.to_container(OmegaConf.load("./src/llm_chatbot_api/conf/logging_config.yaml"), resolve=True)
+logging.config.dictConfig(logging_config)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler()
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-
 
 def create_app(config_path: str = "src/text_classification/conf/config.yaml") -> FastAPI:
     """
@@ -42,5 +37,5 @@ if __name__ == "__main__":
     create_tables()
     app = create_app(config_path)
     logger.info("Starting the API server...")
-    uvicorn.run(app, host=config.api.host, port=config.api.port)
+    uvicorn.run(app, host=config.api.host, port=config.api.port, log_level="info")
     logger.info("API server stopped.")

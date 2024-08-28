@@ -3,15 +3,11 @@ import os
 
 from omegaconf import OmegaConf
 
-from llm_chatbot_api.db.models import Message
+from llm_chatbot_api.api.schemas import Message
 
 # Load logging configuration with OmegaConf
 logging_config = OmegaConf.to_container(OmegaConf.load("src/llm_chatbot_api/conf/logging_config.yaml"), resolve=True)
-
-# Apply the logging configuration
 logging.config.dictConfig(logging_config)
-
-# Configure logging
 logger = logging.getLogger(__name__)
 
 class FireworksLLM:
@@ -26,13 +22,12 @@ class FireworksLLM:
         self.model_name = model_name
         self.system_prompt = system_prompt
 
-    def run(self, chathistory: list[Message]):
+    def invoke(self, chathistory: list[Message]):
         """Run the LLM with the given prompt text or file path."""
+        messages = [{"role": message.role, "content": message.content} for message in chathistory]
         completion = self.client.ChatCompletion.create(
             model=self.model_name,
-            messages=[
-                chathistory
-            ],
+            messages=messages,
             max_tokens=3200,
             temperature=0.5,
             presence_penalty=0,

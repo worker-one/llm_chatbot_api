@@ -2,7 +2,7 @@ llm:
   model_name: "accounts/fireworks/models/llama-v3-70b-instruct"
   system_prompt: "You are helpful an AI assistant. You can ask me anything about LLM. I will try to help you as much as I can."
 api:
-    version: "1.0.0"
+    version: "0.1.0"
     title: "LLM Chatbot API"
     description: "API for interaction with llm chatbot"
     host: "0.0.0.0"

@@ -10,11 +10,7 @@ from .models import Base
 
 # Load logging configuration with OmegaConf
 logging_config = OmegaConf.to_container(OmegaConf.load("./src/llm_chatbot_api/conf/logging_config.yaml"), resolve=True)
-
-# Apply the logging configuration
 logging.config.dictConfig(logging_config)
-
-# Configure logging
 logger = logging.getLogger(__name__)
 
 load_dotenv(find_dotenv(usecwd=True))

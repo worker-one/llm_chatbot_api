@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from llm_chatbot_api.db.models import Chat, Message, User
 from sqlalchemy.orm import Session
 
@@ -30,8 +32,19 @@ def create_chat(db: Session, user_id: int, name: str):
     db.refresh(db_chat)
     return db_chat
 
-def create_message(db: Session, chat_id: int, role: str, message: str, timestamp):
-    db_message = Message(chat_id=chat_id, role=role, message=message, timestamp=timestamp)
+def delete_chat(db: Session, user_id: int, chat_id: int):
+    # First, delete the messages associated with the chat
+    db_messages = db.query(Message).filter(Message.chat_id == chat_id).all()
+    for message in db_messages:
+        db.delete(message)
+
+    # Then, delete the chat
+    db_chat = db.query(Chat).filter(Chat.id == chat_id, Chat.user_id == user_id).first()
+    db.delete(db_chat)
+    db.commit()
+
+def create_message(db: Session, chat_id: int, role: str, content: str, timestamp: datetime):
+    db_message = Message(chat_id=chat_id, role=role, content=content, timestamp=timestamp)
     db.add(db_message)
     db.commit()
     db.refresh(db_message)

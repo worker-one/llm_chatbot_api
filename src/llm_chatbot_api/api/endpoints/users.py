@@ -1,20 +1,16 @@
 import logging
+
 from fastapi import APIRouter
-from omegaconf import OmegaConf
-from sqlalchemy.orm import Session
+from llm_chatbot_api.api import schemas
+from llm_chatbot_api.db import models
 from llm_chatbot_api.db.crud import read_users
 from llm_chatbot_api.db.database import get_session
-from llm_chatbot_api.db import models
-from llm_chatbot_api.api import schemas
-
+from omegaconf import OmegaConf
+from sqlalchemy.orm import Session
 
 # Load logging configuration with OmegaConf
 logging_config = OmegaConf.to_container(OmegaConf.load("src/llm_chatbot_api/conf/logging_config.yaml"), resolve=True)
-
-# Apply the logging configuration
 logging.config.dictConfig(logging_config)
-
-# Configure logging
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
