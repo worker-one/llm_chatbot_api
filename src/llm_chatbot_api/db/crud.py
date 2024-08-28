@@ -23,8 +23,8 @@ def create_user(db: Session, name: str):
     db.refresh(db_user)
     return db_user
 
-def create_chat(db: Session, user_id: int, message: str, timestamp):
-    db_chat = Chat(user_id=user_id, message=message, timestamp=timestamp)
+def create_chat(db: Session, user_id: int, name: str):
+    db_chat = Chat(user_id=user_id, name=name)
     db.add(db_chat)
     db.commit()
     db.refresh(db_chat)

@@ -6,29 +6,33 @@ class Message(BaseModel):
     content: str
 
 class User(BaseModel):
-    id: str
+    id: int
     name: str
 
 class Chat(BaseModel):
-    chat_id: str
+    user_id: int
+    chat_id: int
     chat_name: str
-    messages: list[Message]
 
 class InvokeChatbotRequest(BaseModel):
-    user_id: str
-    chat_id: str
+    user_id: int
+    chat_id: int
     user_message: str
 
 class InvokeChatbotResponse(BaseModel):
-    user_id: str
+    user_id: int
     chat_id: str
     llm_message: str
 
 class AddUsersRequest(BaseModel):
     users: list[User]
 
-class ChatsRequest(BaseModel):
-    user_id: str
+class AddChatRequest(BaseModel):
+    user_id: int
+    chat_name: str
 
-class ChatsResponse(BaseModel):
+class GetChatsRequest(BaseModel):
+    user_id: int
+
+class GetChatsResponse(BaseModel):
     chats: list[Chat]
