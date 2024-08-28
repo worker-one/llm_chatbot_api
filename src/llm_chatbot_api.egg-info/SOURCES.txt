@@ -14,9 +14,10 @@ src/llm_chatbot_api/api/endpoints/chats.py
 src/llm_chatbot_api/api/endpoints/invoke.py
 src/llm_chatbot_api/api/endpoints/users.py
 src/llm_chatbot_api/conf/config.yaml
+src/llm_chatbot_api/conf/logging_config.yaml
 src/llm_chatbot_api/core/__init__.py
 src/llm_chatbot_api/core/llm.py
 src/llm_chatbot_api/db/__init__.py
 src/llm_chatbot_api/db/crud.py
 src/llm_chatbot_api/db/database.py
-src/llm_chatbot_api/db/schema.py
+src/llm_chatbot_api/db/models.py
