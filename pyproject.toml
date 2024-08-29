@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]  # project’s basic metadata, such as the dependencies, your name, etc.
 name = "llm_chatbot_api"
-version = "0.0.0"  #
-description = "REST API interface for LLM Chatbot"
+version = "0.1.0"
+description = "REST API interface for LLM Chatbot with multiple chats"
 readme = "README.md"
 authors = [
     {name = "Konstantin Verner"},
