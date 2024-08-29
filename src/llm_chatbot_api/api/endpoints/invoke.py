@@ -15,7 +15,11 @@ logging.config.dictConfig(logging_config)
 logger = logging.getLogger(__name__)
 
 config = OmegaConf.load("./src/llm_chatbot_api/conf/config.yaml")
-llm = FireworksLLM(config.llm.model_name, config.llm.system_prompt)
+llm = FireworksLLM(
+    config.llm.model_name,
+    config.llm.system_prompt,
+    config.llm.max_tokens
+)
 
 router = APIRouter()
 
@@ -40,7 +44,7 @@ def invoke(request: InvokeChatbotRequest) -> InvokeChatbotResponse:
 
     try:
         # add the response to the chat history
-        crud.create_message(db, chat_id, "AI", content=ai_message, timestamp=datetime.now())
+        crud.create_message(db, chat_id, "assistant", content=ai_message, timestamp=datetime.now())
     except Exception as e:
         logger.error(f"Error adding AI message to chat history: {e}")
         raise e

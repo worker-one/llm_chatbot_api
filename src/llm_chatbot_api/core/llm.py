@@ -11,7 +11,7 @@ logging.config.dictConfig(logging_config)
 logger = logging.getLogger(__name__)
 
 class FireworksLLM:
-    def __init__(self, model_name: str, system_prompt: str):
+    def __init__(self, model_name: str, system_prompt: str, max_tokens: int = 500):
         import fireworks.client
         FIREWORKS_API_KEY = os.getenv("FIREWORKS_API_KEY")
         if FIREWORKS_API_KEY is None:
@@ -21,18 +21,22 @@ class FireworksLLM:
         self.client = fireworks.client
         self.model_name = model_name
         self.system_prompt = system_prompt
+        self.max_tokens = max_tokens
 
     def invoke(self, chathistory: list[Message]):
         """Run the LLM with the given prompt text or file path."""
         messages = [{"role": message.role, "content": message.content} for message in chathistory]
+        messages.append({"role": "system", "content": "Answer the last user's question."})
+        print(messages)
         completion = self.client.ChatCompletion.create(
             model=self.model_name,
             messages=messages,
-            max_tokens=3200,
-            temperature=0.5,
+            max_tokens=self.max_tokens,
+            temperature=0.2,
             presence_penalty=0,
             frequency_penalty=0,
             top_p=1,
             top_k=40
         )
+        print(completion.)
         return completion.choices[0].message.content
