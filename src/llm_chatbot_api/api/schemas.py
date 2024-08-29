@@ -30,8 +30,8 @@ class InvokeChatbotResponse(BaseModel):
     chat_id: int
     ai_message: str
 
-class AddUsersRequest(BaseModel):
-    users: list[User]
+class AddUserRequest(BaseModel):
+    user: User
 
 class AddChatRequest(BaseModel):
     user_id: int

@@ -3,7 +3,7 @@ import logging
 from fastapi import APIRouter
 from llm_chatbot_api.api import schemas
 from llm_chatbot_api.db import models
-from llm_chatbot_api.db.crud import read_users
+from llm_chatbot_api.db.crud import read_user, read_users
 from llm_chatbot_api.db.database import get_session
 from omegaconf import OmegaConf
 from sqlalchemy.orm import Session
@@ -15,17 +15,22 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-@router.post("/add_users", operation_id="ADD-USERS")
-def add_users(request: schemas.AddUsersRequest):
+@router.post("/add_user", operation_id="ADD-USER")
+def add_user(request: schemas.AddUserRequest):
     db: Session = get_session()
-    users = request.users
-    for user in users:
-        logger.info(f"Adding user: {user}")
-        db_user = models.User(id=user.id, name=user.name)
-        db.add(db_user)
-        db.commit()
-        db.refresh(db_user)
-    return {"message": "Users added successfully."}
+    user = request.user
+
+    # Check if the user already exists
+    db_user = read_user(db, user.id)
+    if not db_user is None:
+        return {"message": f"User {user.name} already exists."}
+
+    logger.info(f"Adding user: {user}")
+    db_user = models.User(id=user.id, name=user.name)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return {"message": f"User {user.name} added successfully."}
 
 @router.get("/get_users", operation_id="GET-USERS")
 def get_users() -> list[schemas.User]:

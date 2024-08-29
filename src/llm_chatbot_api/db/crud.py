@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from llm_chatbot_api.db.models import Chat, Message, User
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 
