@@ -17,7 +17,7 @@ def get_user_chats(db: Session, user_id: int):
 def get_chat_history(db: Session, user_id: int, chat_id: int, limit: int = 10) -> list[Message]:
     return db.query(Message).filter(
         Message.chat_id == chat_id
-    ).order_by(Message.timestamp.desc()).limit(limit).all()
+    ).order_by(Message.timestamp.asc()).limit(limit).all()
 
 def create_user(db: Session, name: str):
     db_user = User(name=name)

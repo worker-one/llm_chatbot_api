@@ -26,7 +26,6 @@ class FireworksLLM:
     def invoke(self, chathistory: list[Message]):
         """Run the LLM with the given prompt text or file path."""
         messages = [{"role": message.role, "content": message.content} for message in chathistory]
-        messages.append({"role": "system", "content": "Answer the last user's question."})
         print(messages)
         completion = self.client.ChatCompletion.create(
             model=self.model_name,
@@ -38,5 +37,4 @@ class FireworksLLM:
             top_p=1,
             top_k=40
         )
-        print(completion.)
         return completion.choices[0].message.content
