@@ -31,20 +31,19 @@ def invoke(request: InvokeChatbotRequest) -> InvokeChatbotResponse:
 
     logger.info(f"User {user_id} sent message: `{user_message}` in chat {chat_id}")
 
-    db: Session = get_session()
 
     # add the message to the chat history
-    crud.create_message(db, chat_id, "user", content=user_message, timestamp=datetime.now())
+    crud.create_message(chat_id, "user", content=user_message, timestamp=datetime.now())
 
     # get the chat history
-    chat_history = crud.get_chat_history(db, user_id, chat_id)
+    chat_history = crud.get_chat_history(user_id, chat_id)
     ai_message = llm.invoke(chat_history)
 
     logger.info(f"AI responded with message: `{ai_message}`")
 
     try:
         # add the response to the chat history
-        crud.create_message(db, chat_id, "assistant", content=ai_message, timestamp=datetime.now())
+        crud.create_message(chat_id, "assistant", content=ai_message, timestamp=datetime.now())
     except Exception as e:
         logger.error(f"Error adding AI message to chat history: {e}")
         raise e

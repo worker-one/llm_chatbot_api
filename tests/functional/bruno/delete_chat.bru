@@ -5,7 +5,14 @@ meta {
 }
 
 post {
-  url: 
-  body: none
+  url: {{localhost}}:{{port}}/delete_chat
+  body: json
   auth: none
+}
+
+body:json {
+  {
+    "user_id": 1,
+    "chat_id": 1
+  }
 }

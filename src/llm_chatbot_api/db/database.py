@@ -10,7 +10,10 @@ from sqlalchemy.pool import NullPool
 from .models import Base
 
 # Load logging configuration with OmegaConf
-logging_config = OmegaConf.to_container(OmegaConf.load("./src/llm_chatbot_api/conf/logging_config.yaml"), resolve=True)
+logging_config = OmegaConf.to_container(
+    OmegaConf.load("./src/llm_chatbot_api/conf/logging_config.yaml"),
+    resolve=True
+)
 logging.config.dictConfig(logging_config)
 logger = logging.getLogger(__name__)
 

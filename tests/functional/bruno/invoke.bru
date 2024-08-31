@@ -5,7 +5,16 @@ meta {
 }
 
 post {
-  url: 
-  body: none
+  url: {{localhost}}:{{port}}/invoke
+  body: json
   auth: none
+}
+
+body:json {
+  {
+    "user_id": 1,
+    "chat_id": 1,
+    "user_message": "Hello",
+    "chat_history_limit": 2
+  }
 }

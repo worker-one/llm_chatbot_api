@@ -4,8 +4,15 @@ meta {
   seq: 4
 }
 
-get {
-  url: 
-  body: none
+post {
+  url: {{localhost}}:{{port}}/add_chat
+  body: json
   auth: none
+}
+
+body:json {
+  {
+      "user_id" : 1,
+      "chat_name" : "test_chat"
+  }
 }
