@@ -27,7 +27,7 @@ if DATABASE_URL is None:
 def get_enginge():
     return create_engine(
         DATABASE_URL,
-        connect_args={'connect_timeout': 5},
+        connect_args={'connect_timeout': 5, "application_name": "llm_chatbot_api"},
         poolclass=NullPool
     )
 
