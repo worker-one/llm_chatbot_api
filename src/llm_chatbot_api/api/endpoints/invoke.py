@@ -54,7 +54,7 @@ def invoke(request: InvokeChatbotRequest) -> InvokeChatbotResponse:
     crud.create_message(chat_id, "user", content=user_message, timestamp=datetime.now())
 
     # get the chat history
-    chat_history = crud.get_chat_history(user_id, chat_id)
+    chat_history = crud.get_chat_history(chat_id)
     ai_message = llm.invoke(chat_history)
 
     logger.info(f"AI responded with message: `{ai_message}`")
