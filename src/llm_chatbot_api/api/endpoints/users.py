@@ -3,7 +3,7 @@ import logging
 from fastapi import APIRouter
 from llm_chatbot_api.api import schemas
 from llm_chatbot_api.db import models
-from llm_chatbot_api.db.crud import read_user, read_users
+from llm_chatbot_api.db.crud import upsert_user, read_users
 from omegaconf import OmegaConf
 from sqlalchemy.orm import Session
 
@@ -19,8 +19,8 @@ def add_user(request: schemas.AddUserRequest):
     user = request.user
 
     logger.info(f"Adding user: {user}")
-    upsert_user(user.name)
-    return {"message": f"User {user.name} added successfully."}
+    upsert_user(user.id, user.name)
+    return {"message": f"User `{user.name}` added successfully."}
 
 @router.get("/get_users", operation_id="GET-USERS")
 def get_users() -> list[schemas.User]:

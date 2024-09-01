@@ -1,8 +1,15 @@
+import logging
 from datetime import datetime
-
+from omegaconf import OmegaConf
 from llm_chatbot_api.db.database import get_session
 from llm_chatbot_api.db.models import Chat, Message, User
 from sqlalchemy.orm import Session
+
+
+# Load logging configuration with OmegaConf
+logging_config = OmegaConf.to_container(OmegaConf.load("./src/llm_chatbot_api/conf/logging_config.yaml"), resolve=True)
+logging.config.dictConfig(logging_config)
+logger = logging.getLogger(__name__)
 
 
 def read_user(user_id: int) -> User:
@@ -33,7 +40,7 @@ def get_chat_history(chat_id: int, limit: int = 10) -> list[Message]:
 
 
 def upsert_user(user_id: int, name: str):
-    db: Session = SessionLocal()
+    db: Session = get_session()
     try:
         user = db.query(User).filter(User.name == name, User.id == user_id).first()
         if user:
@@ -41,7 +48,7 @@ def upsert_user(user_id: int, name: str):
             user.id = user_id
             logger.info(f"User with id {name} updated successfully.")
         else:
-            new_user = User(id = user_id, name=username)
+            new_user = User(id = user_id, name=name)
             db.add(new_user)
             logger.info(f"User with name {name} added successfully.")
         db.commit()

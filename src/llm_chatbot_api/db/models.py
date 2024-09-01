@@ -7,8 +7,8 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = 'users_chatbot'
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, index=True)
+    id = Column(Integer, unique=True, primary_key=True, index=True)
+    name = Column(String, index=True)
 
 class Chat(Base):
     __tablename__ = 'chats_chatbot'
