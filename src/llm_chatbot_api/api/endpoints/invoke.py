@@ -38,7 +38,7 @@ def invoke(request: InvokeChatbotRequest) -> InvokeChatbotResponse:
         raise UserDoesNotExist()
 
     # check if chat exists
-    db_chat = crud.read_chat(chat_id)
+    db_chat = crud.get_chat(chat_id, user_id)
     if db_chat is None:
         raise ChatDoesNotExist()
 

@@ -30,6 +30,12 @@ def get_user_chats(user_id: int) -> list[Chat]:
     db.close()
     return result
 
+def get_chat(chat_id: int, user_id: int) -> Chat:
+    db: Session = get_session()
+    result = db.query(Chat).filter(Chat.id == chat_id, Chat.user_id == user_id).first()
+    db.close()
+    return result
+
 def get_chat_history(chat_id: int, limit: int = 10) -> list[Message]:
     db: Session = get_session()
     result = db.query(Message).filter(
