@@ -18,16 +18,8 @@ router = APIRouter()
 def add_user(request: schemas.AddUserRequest):
     user = request.user
 
-    # Check if the user already exists
-    db_user = read_user(user.id)
-    if not db_user is None:
-        return {"message": f"User {user.name} already exists."}
-
     logger.info(f"Adding user: {user}")
-    db_user = models.User(id=user.id, name=user.name)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
+    upsert_user(user.name)
     return {"message": f"User {user.name} added successfully."}
 
 @router.get("/get_users", operation_id="GET-USERS")

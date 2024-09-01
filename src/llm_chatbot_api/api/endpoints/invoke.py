@@ -8,6 +8,7 @@ from llm_chatbot_api.db import crud, models
 from llm_chatbot_api.db.database import get_session
 from omegaconf import OmegaConf
 from sqlalchemy.orm import Session
+from llm_chatbot_api.utils.exceptions import UserDoesNotExist, ChatDoesNotExist, MessageIsEmpty, MessageIsTooLong
 
 # Load logging configuration with OmegaConf
 logging_config = OmegaConf.to_container(OmegaConf.load("./src/llm_chatbot_api/conf/logging_config.yaml"), resolve=True)
@@ -23,14 +24,31 @@ llm = FireworksLLM(
 
 router = APIRouter()
 
+MAX_MESSAGE_LENGTH = 2000
+
 @router.post("/invoke", operation_id="INVOKE-LLM")
 def invoke(request: InvokeChatbotRequest) -> InvokeChatbotResponse:
     user_id = request.user_id
     chat_id = request.chat_id
     user_message = request.user_message
 
-    logger.info(f"User {user_id} sent message: `{user_message}` in chat {chat_id}")
+    # check if user exists
+    db_user = crud.read_user(user_id)
+    if db_user is None:
+        raise UserDoesNotExist()
 
+    # check if chat exists
+    db_chat = crud.read_chat(chat_id)
+    if db_chat is None:
+        raise ChatDoesNotExist()
+
+    if not user_message:
+        raise MessageIsEmpty()
+
+    if len(user_message) > MAX_MESSAGE_LENGTH:
+        raise MessageIsTooLong()
+
+    logger.info(f"User {user_id} sent message: `{user_message}` in chat {chat_id}")
 
     # add the message to the chat history
     crud.create_message(chat_id, "user", content=user_message, timestamp=datetime.now())

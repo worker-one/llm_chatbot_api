@@ -1,9 +1,8 @@
 from datetime import datetime
 
-from llm_chatbot_api.db.models import Chat, Message, User
-from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.orm import Session
 from llm_chatbot_api.db.database import get_session
+from llm_chatbot_api.db.models import Chat, Message, User
+from sqlalchemy.orm import Session
 
 
 def read_user(user_id: int) -> User:
@@ -24,7 +23,7 @@ def get_user_chats(user_id: int) -> list[Chat]:
     db.close()
     return result
 
-def get_chat_history(user_id: int, chat_id: int, limit: int = 10) -> list[Message]:
+def get_chat_history(chat_id: int, limit: int = 10) -> list[Message]:
     db: Session = get_session()
     result = db.query(Message).filter(
         Message.chat_id == chat_id
@@ -32,14 +31,22 @@ def get_chat_history(user_id: int, chat_id: int, limit: int = 10) -> list[Messag
     db.close()
     return result
 
-def create_user(name: str) -> User:
-    db: Session = get_session()
-    db_user = User(name=name)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    db.close()
-    return db_user
+
+def upsert_user(user_id: int, name: str):
+    db: Session = SessionLocal()
+    try:
+        user = db.query(User).filter(User.name == name, User.id == user_id).first()
+        if user:
+            user.name = name
+            user.id = user_id
+            logger.info(f"User with id {name} updated successfully.")
+        else:
+            new_user = User(id = user_id, name=username)
+            db.add(new_user)
+            logger.info(f"User with name {name} added successfully.")
+        db.commit()
+    finally:
+        db.close()
 
 def create_chat(user_id: int, name: str) -> Chat:
     db: Session = get_session()

@@ -16,6 +16,12 @@ router = APIRouter()
 @router.post("/add_chat", operation_id="ADD-CHAT")
 def add_chat(request: AddChatRequest):
     logger.info(f"Creating a chat for user {request.user_id}")
+
+    # check if user exists
+    db_user = crud.read_user(request.user_id)
+    if db_user is None:
+        return {"message": f"User with id {request.user_id} does not exist."}
+
     crud.create_chat(user_id=request.user_id, name=request.chat_name)
     return {"message": "Chat added successfully."}
 
