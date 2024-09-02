@@ -36,11 +36,10 @@ def get_chat(chat_id: int, user_id: int) -> Chat:
     db.close()
     return result
 
-def get_chat_history(chat_id: int, user_id: int, limit: int = 10) -> list[Message]:
+def get_chat_history(chat_id: int, limit: int = 10) -> list[Message]:
     db: Session = get_session()
     result = db.query(Message).filter(
-        Message.chat_id == chat_id,
-        Message.user_id == user_id
+        Message.chat_id == chat_id
     ).order_by(Message.timestamp.asc()).limit(limit).all()
     db.close()
     return result
