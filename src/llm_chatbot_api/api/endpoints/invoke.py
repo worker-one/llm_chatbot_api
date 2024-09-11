@@ -2,7 +2,8 @@ import logging
 from datetime import datetime
 
 from fastapi import APIRouter
-from omegaconf import OmegaConf, instantiate
+from omegaconf import OmegaConf
+from hydra.utils import instantiate
 
 
 
