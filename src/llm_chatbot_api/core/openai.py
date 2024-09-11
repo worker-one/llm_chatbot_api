@@ -6,7 +6,7 @@ import logging.config
 from omegaconf import OmegaConf
 
 
-logging_config = OmegaConf.to_container(OmegaConf.load("./src/rag_api/conf/logging_config.yaml"), resolve=True)
+logging_config = OmegaConf.to_container(OmegaConf.load("./src/llm_chatbot_api/conf/logging_config.yaml"), resolve=True)
 logging.config.dictConfig(logging_config)
 logger = logging.getLogger(__name__)
 
@@ -32,29 +32,28 @@ class OpenAI:
         self.prompt_template = prompt_template
         self.max_tokens = max_tokens
 
-    def invoke(self, chathistory: list[Message]):
-        """Run the LLM with the given prompt text or file path."""
-        
-        completion = self.client.ChatCompletion.create(
-            model=self.model_name,
-            messages=messages,
-            max_tokens=self.max_tokens,
-            temperature=0.2,
-            presence_penalty=0,
-            frequency_penalty=0,
-            top_p=1,
-            top_k=40
-        )
-        return completion.choices[0].message.content
+    def invoke(self, query: str, document_text: list[str], document_name: list[str]):
+        """Run the LLM model with the given query and document."""
 
-    def invoke(self, chathistory: list[Message]):
-        """Run the LLM model with the given query."""
-
-        messages = [{"role": message.role, "content": message.content} for message in chathistory]
+        prompt = self.prompt_template.format(
+                        query=query,
+                        document_name=document_name[0],
+                        document_text=document_text[0]
+                    )
 
         payload = {
             "model": self.model_name,
-            "messages": messages,
+            "messages": [
+                {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": prompt
+                    }
+                ]
+                }
+            ],
             "max_tokens": self.max_tokens
         }
 
