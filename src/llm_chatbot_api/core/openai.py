@@ -29,6 +29,7 @@ class OpenAI:
             "Authorization": f"Bearer {OPENAI_API_KEY}"
         }
         self.model_name = model_name
+        self.provider = "openai"
         self.prompt_template = prompt_template
         self.max_tokens = max_tokens
         self.chat_history_limit = chat_history_limit

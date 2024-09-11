@@ -25,6 +25,7 @@ class FireworksLLM:
             raise ValueError("FIREWORKS_API_KEY is not set in the environment variables.")
         fireworks.client.api_key = FIREWORKS_API_KEY
         self.client = fireworks.client
+        self.provider = "fireworksai"
         self.model_name = model_name
         self.system_prompt = system_prompt
         self.max_tokens = max_tokens
