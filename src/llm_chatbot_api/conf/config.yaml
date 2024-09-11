@@ -6,13 +6,13 @@ llm:
       model_name: "accounts/fireworks/models/llama-v3-70b-instruct"
       system_prompt: "You are helpful an AI assistant. You can ask me anything about LLM. I will try to help you as much as I can."
       chat_history_limit: 10
-      max_tokens: 500
+      max_tokens: 2500
     openai:
       _target_: llm_chatbot_api.core.openai.OpenAI
       model_name: "gpt-3.5-turbo"
       prompt_template: "You are helpful an AI assistant. You can ask me anything about LLM. I will try to help you as much as I can."
       chat_history_limit: 10
-      max_tokens: 500
+      max_tokens: 2500
 api:
     version: "0.1.0"
     title: "LLM Chatbot API"

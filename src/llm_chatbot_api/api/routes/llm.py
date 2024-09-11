@@ -46,17 +46,6 @@ def set_model(request: SetModelRequest):
     llm.model_name = request.model_name if request.model_name is not None else llm.model_name
     llm.max_tokens = request.max_tokens if request.max_tokens is not None else llm.max_tokens
     llm.chat_history_limit = request.chat_history_limit if request.chat_history_limit is not None else llm.chat_history_limit
-    
-    # check that the model is valid
-    try:
-        llm.invoke([])
-    except Exception as e:
-        llm = instantiate(config.llm.clients.openai)
-        return {
-            "status": "error",
-            "message": "Configuration not valid."
-            f"Resetting to default model `{llm.model_name}`"
-        }
  
     return {"status": "success", "message": "Model updated successfully"}
 
