@@ -20,8 +20,10 @@ classifiers = [  #
 ]
 
 dependencies = [
+    "requests",
     "uvicorn",
     "fastapi",
+    "hydra-core",
     "omegaconf",
     "fireworks-ai",
     "sqlalchemy==1.4.25",

@@ -3,7 +3,7 @@ import uvicorn
 from fastapi import FastAPI
 from omegaconf import OmegaConf
 
-from llm_chatbot_api.api.endpoints import chats, users, invoke
+from llm_chatbot_api.api.endpoints import chats, llm, users
 from llm_chatbot_api.db.database import create_tables
 
 # Load logging configuration with OmegaConf
@@ -26,7 +26,7 @@ def create_app(config_path: str = "src/text_classification/conf/config.yaml") ->
 
     app.include_router(chats.router)
     app.include_router(users.router)
-    app.include_router(invoke.router)
+    app.include_router(llm.router)
 
     return app
 

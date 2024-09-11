@@ -19,13 +19,13 @@ class Chat(BaseModel):
     chat_id: int
     chat_name: str
 
-class InvokeChatbotRequest(BaseModel):
+class QueryChatbotRequest(BaseModel):
     user_id: int
     chat_id: int
     user_message: str
     chat_history_limit: Optional[int] = 10
 
-class InvokeChatbotResponse(BaseModel):
+class QueryChatbotResponse(BaseModel):
     user_id: int
     chat_id: int
     ai_message: str

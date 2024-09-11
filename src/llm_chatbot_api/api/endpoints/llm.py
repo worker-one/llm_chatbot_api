@@ -2,11 +2,12 @@ import logging
 from datetime import datetime
 
 from fastapi import APIRouter
-from omegaconf import OmegaConf, instantiate
+from omegaconf import OmegaConf
+from hydra.utils import instantiate
 
 
 
-from llm_chatbot_api.api.schemas import InvokeChatbotRequest, InvokeChatbotResponse
+from llm_chatbot_api.api.schemas import QueryChatbotRequest, QueryChatbotResponse
 from llm_chatbot_api.db import crud
 from llm_chatbot_api.utils.exceptions import UserDoesNotExist, ChatDoesNotExist, MessageIsEmpty, MessageIsTooLong
 
@@ -18,9 +19,11 @@ logger = logging.getLogger(__name__)
 config = OmegaConf.load("./src/llm_chatbot_api/conf/config.yaml")
 
 if config.llm.provider == "openai":
-    llm = instantiate(config.llm.openai)
+    llm = instantiate(config.llm.clients.openai)
+    logger.info(f"Connected to the model `{llm.model_name}` with OpenAI")
 elif config.llm.provider == "fireworksai":
-    llm = instantiate(config.llm.fireworksai)
+    llm = instantiate(config.llm.clients.fireworksai)
+    logger.info(f"Connected to the model `{llm.model_name}` with FireworksAI")
 else:
     raise ValueError(f"Invalid LLM provider: {config.llm.provider}")
 
@@ -28,8 +31,8 @@ router = APIRouter()
 
 MAX_MESSAGE_LENGTH = 2000
 
-@router.post("/invoke", operation_id="INVOKE-LLM")
-def invoke(request: InvokeChatbotRequest) -> InvokeChatbotResponse:
+@router.post("/query")
+def query(request: QueryChatbotRequest) -> QueryChatbotResponse:
     user_id = request.user_id
     chat_id = request.chat_id
     user_message = request.user_message
@@ -67,5 +70,5 @@ def invoke(request: InvokeChatbotRequest) -> InvokeChatbotResponse:
     except Exception as e:
         logger.error(f"Error adding AI message to chat history: {e}")
         raise e
-    response = InvokeChatbotResponse(user_id=user_id, chat_id=chat_id, ai_message=ai_message)
+    response = QueryChatbotResponse(user_id=user_id, chat_id=chat_id, ai_message=ai_message)
     return response

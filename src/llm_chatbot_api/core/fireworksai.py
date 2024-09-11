@@ -60,4 +60,3 @@ class FireworksLLM:
         except Exception as e:
             logger.error(f"Error invoking Fireworks LLM: {e}")
             raise e
-
