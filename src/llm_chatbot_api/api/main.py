@@ -3,7 +3,7 @@ import uvicorn
 from fastapi import FastAPI
 from omegaconf import OmegaConf
 
-from llm_chatbot_api.api.endpoints import chats, llm, users
+from llm_chatbot_api.api.routes import chats, llm, users
 from llm_chatbot_api.db.database import create_tables
 
 # Load logging configuration with OmegaConf
@@ -11,7 +11,7 @@ logging_config = OmegaConf.to_container(OmegaConf.load("./src/llm_chatbot_api/co
 logging.config.dictConfig(logging_config)
 logger = logging.getLogger(__name__)
 
-def create_app(config_path: str = "src/text_classification/conf/config.yaml") -> FastAPI:
+def create_app(config_path: str) -> FastAPI:
     """
     Create a FastAPI application with the specified configuration.
     Args:

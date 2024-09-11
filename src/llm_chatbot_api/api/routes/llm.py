@@ -7,7 +7,7 @@ from hydra.utils import instantiate
 
 
 
-from llm_chatbot_api.api.schemas import QueryChatbotRequest, QueryChatbotResponse
+from llm_chatbot_api.api.schemas import QueryChatbotRequest, QueryChatbotResponse, ModelInfoResponse, SetModelRequest
 from llm_chatbot_api.db import crud
 from llm_chatbot_api.utils.exceptions import UserDoesNotExist, ChatDoesNotExist, MessageIsEmpty, MessageIsTooLong
 
@@ -30,6 +30,34 @@ else:
 router = APIRouter()
 
 MAX_MESSAGE_LENGTH = 2000
+
+@router.get("/info")
+def info() -> ModelInfoResponse:
+    return ModelInfoResponse(
+        model_name=llm.model_name,
+        provider=llm.provider,
+        max_tokens=llm.max_tokens,
+        chat_history_limit=llm.chat_history_limit
+    )
+
+@router.post("/set_model")
+def set_model(request: SetModelRequest):
+    llm.model_name = request.model_name if request.model_name is not None else llm.model_name
+    llm.max_tokens = request.max_tokens if request.max_tokens is not None else llm.max_tokens
+    llm.chat_history_limit = request.chat_history_limit if request.chat_history_limit is not None else llm.chat_history_limit
+    
+    # check that the model is valid
+    try:
+        llm.invoke([])
+    except Exception as e:
+        llm = instantiate(config.llm.clients.openai)
+        return {
+            "status": "error",
+            "message": "Configuration not valid."
+            f"Resetting to default model `{llm.model_name}`"
+        }
+ 
+    return {"status": "success", "message": "Model updated successfully"}
 
 @router.post("/query")
 def query(request: QueryChatbotRequest) -> QueryChatbotResponse:

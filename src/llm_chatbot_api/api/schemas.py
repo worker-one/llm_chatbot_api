@@ -49,3 +49,14 @@ class GetChatsRequest(BaseModel):
 
 class GetChatsResponse(BaseModel):
     chats: list[Chat]
+
+class ModelInfoResponse(BaseModel):
+    model_name: str
+    provider: str
+    max_tokens: int
+    chat_history_limit: int
+
+class SetModelRequest(BaseModel):
+    model_name: Optional[str] = None
+    max_tokens: Optional[int] = None
+    chat_history_limit: Optional[int] = None
