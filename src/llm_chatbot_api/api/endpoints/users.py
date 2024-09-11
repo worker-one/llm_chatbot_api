@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-@router.post("/add_user", operation_id="ADD-USER")
+@router.post("/add_user")
 def add_user(request: schemas.AddUserRequest):
     user = request.user
 
@@ -22,7 +22,7 @@ def add_user(request: schemas.AddUserRequest):
     upsert_user(user.id, user.name)
     return {"message": f"User `{user.name}` added successfully."}
 
-@router.get("/get_users", operation_id="GET-USERS")
+@router.get("/get_users")
 def get_users() -> list[schemas.User]:
     db_users = read_users()
     users = [schemas.User(id=db_user.id, name=db_user.name) for db_user in db_users]
