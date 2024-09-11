@@ -42,6 +42,7 @@ def info() -> ModelInfoResponse:
 
 @router.post("/set_model")
 def set_model(request: SetModelRequest):
+    global llm
     llm.model_name = request.model_name if request.model_name is not None else llm.model_name
     llm.max_tokens = request.max_tokens if request.max_tokens is not None else llm.max_tokens
     llm.chat_history_limit = request.chat_history_limit if request.chat_history_limit is not None else llm.chat_history_limit
