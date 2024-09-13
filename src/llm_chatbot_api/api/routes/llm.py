@@ -37,16 +37,19 @@ def info() -> ModelInfoResponse:
         model_name=llm.model_name,
         provider=llm.provider,
         max_tokens=llm.max_tokens,
-        chat_history_limit=llm.chat_history_limit
+        chat_history_limit=llm.chat_history_limit,
+        temperature=llm.temperature
     )
 
 @router.post("/set_model")
 def set_model(request: SetModelRequest):
     global llm
+    
     llm.model_name = request.model_name if request.model_name is not None else llm.model_name
     llm.max_tokens = request.max_tokens if request.max_tokens is not None else llm.max_tokens
     llm.chat_history_limit = request.chat_history_limit if request.chat_history_limit is not None else llm.chat_history_limit
- 
+    llm.temperature = request.temperature if request.temperature is not None else llm.temperature
+
     return {"status": "success", "message": "Model updated successfully"}
 
 @router.post("/query")

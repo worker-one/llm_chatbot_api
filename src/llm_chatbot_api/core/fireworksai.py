@@ -16,7 +16,8 @@ class FireworksLLM:
             model_name: str,
             system_prompt: str,
             max_tokens: int = 500,
-            chat_history_limit: int = 10
+            chat_history_limit: int = 10,
+            temperature: float = 0.7
         ):
         import fireworks.client
         FIREWORKS_API_KEY = os.getenv("FIREWORKS_API_KEY")
@@ -30,6 +31,7 @@ class FireworksLLM:
         self.system_prompt = system_prompt
         self.max_tokens = max_tokens
         self.chat_history_limit = chat_history_limit
+        self.temperature = temperature
 
     def invoke(self, chat_history: list[Message]):
         """Run the LLM with the given prompt text or file path.
@@ -51,7 +53,7 @@ class FireworksLLM:
                 model=self.model_name,
                 messages=messages,
                 max_tokens=self.max_tokens,
-                temperature=0.2,
+                temperature=self.temperature,
                 presence_penalty=0,
                 frequency_penalty=0,
                 top_p=1,

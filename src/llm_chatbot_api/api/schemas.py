@@ -55,8 +55,10 @@ class ModelInfoResponse(BaseModel):
     provider: str
     max_tokens: int
     chat_history_limit: int
+    temperature: float
 
 class SetModelRequest(BaseModel):
     model_name: Optional[str] = None
     max_tokens: Optional[int] = None
     chat_history_limit: Optional[int] = None
+    temperature: Optional[float] = None

@@ -17,7 +17,8 @@ class OpenAI:
             model_name: str,
             prompt_template: str,
             max_tokens: int = 400,
-            chat_history_limit: int = 10
+            chat_history_limit: int = 10,
+            temperature: float = 0.7
     ):
         self.base_url = "https://api.openai.com/v1/chat/completions"
         OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -33,6 +34,7 @@ class OpenAI:
         self.prompt_template = prompt_template
         self.max_tokens = max_tokens
         self.chat_history_limit = chat_history_limit
+        self.temperature = temperature
 
     def invoke(self, chat_history: list[Message]):
         """Run the LLM model with the given query."""
@@ -43,7 +45,8 @@ class OpenAI:
         payload = {
             "model": self.model_name,
             "messages": messages,
-            "max_tokens": self.max_tokens
+            "max_tokens": self.max_tokens,
+            "temperature": self.temperature
         }
 
 
