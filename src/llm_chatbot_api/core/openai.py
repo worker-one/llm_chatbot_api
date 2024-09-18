@@ -39,8 +39,11 @@ class OpenAI:
     def invoke(self, chat_history: list[Message]):
         """Run the LLM model with the given query."""
 
-        chat_history = chat_history[-self.chat_history_limit:]
+        #chat_history = chat_history[-self.chat_history_limit:]
         messages = [{"role": message.role, "content": message.content} for message in chat_history]
+
+        for message in messages:
+            print(message)
 
         payload = {
             "model": self.model_name,

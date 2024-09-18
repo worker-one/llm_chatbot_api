@@ -61,6 +61,34 @@ def upsert_user(user_id: int, name: str):
     finally:
         db.close()
 
+def delete_user(user_id: int) -> None:
+    db: Session = get_session()
+    try:
+        # First, find the user's chats and associated messages
+        user_chats = db.query(Chat).filter(Chat.user_id == user_id).all()
+        
+        for chat in user_chats:
+            # Delete messages associated with each chat
+            db_messages = db.query(Message).filter(Message.chat_id == chat.id).all()
+            for message in db_messages:
+                db.delete(message)
+            
+            # Delete the chat itself
+            db.delete(chat)
+
+        # Finally, delete the user
+        db_user = db.query(User).filter(User.id == user_id).first()
+        if db_user:
+            db.delete(db_user)
+
+        db.commit()
+        logger.info(f"User with id {user_id} and all associated data deleted successfully.")
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Error deleting user with id {user_id}: {e}")
+    finally:
+        db.close()
+
 def create_chat(user_id: int, name: str) -> Chat:
     db: Session = get_session()
     db_chat = Chat(user_id=user_id, name=name)
