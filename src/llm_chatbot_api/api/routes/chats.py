@@ -2,10 +2,8 @@ import logging
 
 from fastapi import APIRouter
 from llm_chatbot_api.api import schemas
-from llm_chatbot_api.api.schemas import AddChatRequest, DeleteChatRequest, GetChatsRequest, GetChatsResponse
+from llm_chatbot_api.api.schemas import AddChatRequest, GetChatsResponse
 from llm_chatbot_api.db import crud
-from llm_chatbot_api.db.database import get_session
-from sqlalchemy.orm import Session
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -13,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-@router.post("/add_chat", operation_id="ADD-CHAT")
+@router.post("/chats")
 def add_chat(request: AddChatRequest):
     logger.info(f"Creating a chat for user {request.user_id}")
 
@@ -25,18 +23,18 @@ def add_chat(request: AddChatRequest):
     crud.create_chat(user_id=request.user_id, name=request.chat_name)
     return {"message": "Chat added successfully."}
 
-@router.post("/get_chats", operation_id="GET-CHATS")
-def read_user_chats(request: GetChatsRequest) -> GetChatsResponse:
-    logger.info(f"Getting chats for user {request.user_id}")
-    db_chats = crud.get_user_chats(request.user_id)
+@router.get("/chats/{user_id}")
+def read_user_chats(user_id) -> GetChatsResponse:
+    logger.info(f"Getting chats for user {user_id}")
+    db_chats = crud.get_user_chats(user_id)
     chats = [schemas.Chat(user_id=db_chat.user_id, chat_id=db_chat.id, chat_name=db_chat.name) for db_chat in db_chats]
-    return GetChatsResponse(user_id=request.user_id, chats=chats)
+    return GetChatsResponse(user_id=user_id, chats=chats)
 
-@router.post("/delete_chat", operation_id="DELETE-CHAT")
-def delete_chat(request: DeleteChatRequest):
-    logger.info(f"Deleting chat {request.chat_id} for user {request.user_id}")
+@router.delete("/chats/{user_id}/{chat_id}")
+def delete_chat(user_id: int, chat_id: int):
+    logger.info(f"Deleting chat {chat_id} for user {user_id}")
     try:
-        crud.delete_chat(user_id=request.user_id, chat_id=request.chat_id)
+        crud.delete_chat(user_id=user_id, chat_id=chat_id)
         return {"message": "Chat deleted successfully."}
     except Exception as e:
         logger.error(f"Error deleting chat: {e}")
