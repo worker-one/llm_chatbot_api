@@ -31,8 +31,9 @@ def get_users() -> list[schemas.User]:
     return users
 
 @router.get("/users/{user_id}")
-def get_user(user_id: int, db: Session = None) -> schemas.User:
-    db_user = models.User.get(db, user_id)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return schemas.User(id=db_user.id, name=db_user.name)
+def get_user(user_id: int) -> schemas.User:
+    db_users = read_users()
+    users = [schemas.User(id=db_user.id, name=db_user.name) for db_user in db_users if user_id==db_user.id]
+    if not users:
+        raise HTTPException(status_code=404, detail=f"User `user_id` not found")
+    return schemas.User(id=users[0].id, name=users[0].name)
