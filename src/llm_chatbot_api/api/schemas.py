@@ -1,7 +1,8 @@
 from datetime import datetime
+from logging import config
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, confloat, conint
 
 
 class Message(BaseModel):
@@ -18,17 +19,6 @@ class Chat(BaseModel):
     user_id: int
     chat_id: int
     chat_name: str
-
-class QueryChatbotRequest(BaseModel):
-    user_id: int
-    chat_id: int
-    user_message: str
-    chat_history_limit: Optional[int] = 10
-
-class QueryChatbotResponse(BaseModel):
-    user_id: int
-    chat_id: int
-    ai_message: str
 
 class AddUserRequest(BaseModel):
     user: User
@@ -50,15 +40,24 @@ class GetChatsRequest(BaseModel):
 class GetChatsResponse(BaseModel):
     chats: list[Chat]
 
-class ModelInfoResponse(BaseModel):
-    model_name: str
-    provider: str
-    max_tokens: int
-    chat_history_limit: int
-    temperature: float
-
-class SetModelRequest(BaseModel):
+class ModelConfig(BaseModel):
     model_name: Optional[str] = None
-    max_tokens: Optional[int] = None
-    chat_history_limit: Optional[int] = None
-    temperature: Optional[float] = None
+    provider: Optional[str] = None
+    max_tokens: Optional[conint(ge=0)] = None
+    chat_history_limit: Optional[conint(ge=0)] = None
+    temperature: Optional[confloat(ge=0.0)] = None
+
+class ModelResponse(BaseModel):
+    response_content: str
+    config: ModelConfig
+
+class QueryModelRequest(BaseModel):
+    user_id: conint(ge=0)
+    chat_id: conint(ge=0)
+    user_message: str
+    config: Optional[ModelConfig] = None
+
+class QueryModelResponse(BaseModel):
+    user_id: conint(ge=0)
+    chat_id: conint(ge=0)
+    model_response: ModelResponse

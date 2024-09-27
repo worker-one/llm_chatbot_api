@@ -57,3 +57,4 @@ class LLM:
         ]
         response = client.invoke(messages)
         return ModelResponse(response_content=response.content, config=config)
+

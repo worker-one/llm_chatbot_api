@@ -1,20 +1,13 @@
 llm:
-  provider: "openai"
-  clients:
-    fireworksai:
-      _target_: llm_chatbot_api.core.fireworksai.FireworksLLM
+  config:
+    default:
+      _target_: llm_chatbot_api.api.schemas.ModelConfig
       model_name: "accounts/fireworks/models/llama-v3-70b-instruct"
-      system_prompt: "You are helpful an AI assistant."
       chat_history_limit: 10
       max_tokens: 2500
       temperature: 0.7
-    openai:
-      _target_: llm_chatbot_api.core.openai.OpenAI
-      model_name: "gpt-4o-mini"
-      prompt_template: "You are helpful an AI assistant."
-      chat_history_limit: 10
-      max_tokens: 2500
-      temperature: 0.7
+      provider: "fireworksai"
+
 api:
     version: "0.1.0"
     title: "LLM Chatbot API"

@@ -2,14 +2,12 @@ import logging
 from datetime import datetime
 
 from fastapi import APIRouter
-from omegaconf import OmegaConf
 from hydra.utils import instantiate
-
-
-
-from llm_chatbot_api.api.schemas import QueryChatbotRequest, QueryChatbotResponse, ModelInfoResponse, SetModelRequest
+from llm_chatbot_api.api.schemas import ModelConfig, QueryModelRequest, QueryModelResponse
+from llm_chatbot_api.core.llm import LLM
 from llm_chatbot_api.db import crud
-from llm_chatbot_api.utils.exceptions import UserDoesNotExist, ChatDoesNotExist, MessageIsEmpty, MessageIsTooLong
+from llm_chatbot_api.utils.exceptions import ChatDoesNotExist, MessageIsEmpty, MessageIsTooLong, UserDoesNotExist
+from omegaconf import OmegaConf
 
 # Load logging configuration with OmegaConf
 logging_config = OmegaConf.to_container(OmegaConf.load("./src/llm_chatbot_api/conf/logging_config.yaml"), resolve=True)
@@ -17,46 +15,35 @@ logging.config.dictConfig(logging_config)
 logger = logging.getLogger(__name__)
 
 config = OmegaConf.load("./src/llm_chatbot_api/conf/config.yaml")
+model_config = instantiate(config.llm.config.default)
+llm = LLM(model_config)
 
-if config.llm.provider == "openai":
-    llm = instantiate(config.llm.clients.openai)
-    logger.info(f"Connected to the model `{llm.model_name}` with OpenAI")
-elif config.llm.provider == "fireworksai":
-    llm = instantiate(config.llm.clients.fireworksai)
-    logger.info(f"Connected to the model `{llm.model_name}` with FireworksAI")
-else:
-    raise ValueError(f"Invalid LLM provider: {config.llm.provider}")
+logger.info(f"Model configuration: {model_config}")
 
 router = APIRouter()
 
 MAX_MESSAGE_LENGTH = 2000
 
-@router.get("/info")
-def info() -> ModelInfoResponse:
-    return ModelInfoResponse(
-        model_name=llm.model_name,
-        provider=llm.provider,
-        max_tokens=llm.max_tokens,
-        chat_history_limit=llm.chat_history_limit,
-        temperature=llm.temperature
-    )
+@router.get("/model/config")
+def get_model_config() -> ModelConfig:
+    return llm.config
 
-@router.post("/set_model")
-def set_model(request: SetModelRequest):
+@router.post("/model/config")
+def update_model_config(request: ModelConfig):
     global llm
-    
-    llm.model_name = request.model_name if request.model_name is not None else llm.model_name
-    llm.max_tokens = request.max_tokens if request.max_tokens is not None else llm.max_tokens
-    llm.chat_history_limit = request.chat_history_limit if request.chat_history_limit is not None else llm.chat_history_limit
-    llm.temperature = request.temperature if request.temperature is not None else llm.temperature
+    try:
+        llm.update_config(request)
+        return {"status": "success", "message": "Model updated successfully"}
+    except Exception as e:
+        logger.error(f"Error updating model: {e}")
+        return {"status": "error", "message": str(e)}
 
-    return {"status": "success", "message": "Model updated successfully"}
-
-@router.post("/query")
-def query(request: QueryChatbotRequest) -> QueryChatbotResponse:
+@router.post("/model/query")
+def query(request: QueryModelRequest) -> QueryModelResponse:
     user_id = request.user_id
     chat_id = request.chat_id
     user_message = request.user_message
+    config = request.config
 
     # check if user exists
     db_user = crud.read_user(user_id)
@@ -81,7 +68,14 @@ def query(request: QueryChatbotRequest) -> QueryChatbotResponse:
 
     # get the chat history
     chat_history = crud.get_chat_history(chat_id)
-    ai_message = llm.invoke(chat_history)
+
+    # invoke the model
+    try:
+        response = llm.invoke(chat_history, config)
+        ai_message = response.response_content
+    except Exception as e:
+        logger.error(f"Error invoking model: {e}")
+        raise e
 
     logger.info(f"AI responded with message: `{ai_message}`")
 
@@ -91,5 +85,9 @@ def query(request: QueryChatbotRequest) -> QueryChatbotResponse:
     except Exception as e:
         logger.error(f"Error adding AI message to chat history: {e}")
         raise e
-    response = QueryChatbotResponse(user_id=user_id, chat_id=chat_id, ai_message=ai_message)
+    response = QueryModelResponse(
+        user_id=user_id,
+        chat_id=chat_id,
+        model_response=response
+    )
     return response

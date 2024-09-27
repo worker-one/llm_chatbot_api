@@ -25,7 +25,9 @@ dependencies = [
     "fastapi",
     "hydra-core",
     "omegaconf",
-    "fireworks-ai",
+    "langchain_fireworks",
+    "langchain_openai",
+    "langchain_core",
     "sqlalchemy==1.4.25",
     "psycopg2-binary",
     "python-dotenv"
