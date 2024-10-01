@@ -7,8 +7,7 @@ from llm_chatbot_api.api.routes import chats, llm, users
 from llm_chatbot_api.db.database import create_tables
 
 # Load logging configuration with OmegaConf
-logging_config = OmegaConf.to_container(OmegaConf.load("./src/llm_chatbot_api/conf/logging_config.yaml"), resolve=True)
-logging.config.dictConfig(logging_config)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def create_app(config_path: str) -> FastAPI:

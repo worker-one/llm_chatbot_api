@@ -50,11 +50,13 @@ class LLM:
         )
 
         chat_history = chat_history[-config.chat_history_limit:]
-        role_message_map = {"user": HumanMessage, "ai": AIMessage}
+        role_message_map = {"user": HumanMessage, "assistant": AIMessage}
         messages = [
-            role_message_map[message.role](message.content)
+            role_message_map[message.role](content=[{"type": "text", "text": message.content}])
             for message in chat_history if message.role in role_message_map
         ]
+        for message in messages:
+            print(type(message))
         response = client.invoke(messages)
         return ModelResponse(response_content=response.content, config=config)
 
