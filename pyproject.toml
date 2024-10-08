@@ -30,7 +30,9 @@ dependencies = [
     "langchain_core",
     "sqlalchemy==1.4.25",
     "psycopg2-binary",
-    "python-dotenv"
+    "python-dotenv",
+    "Pillow",
+    "python-multipart"
 ]
 
 
