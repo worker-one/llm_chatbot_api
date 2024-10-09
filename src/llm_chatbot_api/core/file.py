@@ -1,15 +1,17 @@
 from io import BytesIO
 from typing import Set
 
-from PyPDF2 import PdfReader
 import docx
 from fastapi import UploadFile
-
 from llm_chatbot_api.utils.exceptions import (
-    TextFileDecodingException, UnexpectedFileReadingException, \
-    WordFileReadingException, FileTooLargeException,
-    PDFFileReadingException, UnsupportedFileTypeException
+    FileTooLargeException,
+    PDFFileReadingException,
+    TextFileDecodingException,
+    UnexpectedFileReadingException,
+    UnsupportedFileTypeException,
+    WordFileReadingException,
 )
+from PyPDF2 import PdfReader
 
 
 class TextFileParser:
