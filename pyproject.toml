@@ -32,7 +32,9 @@ dependencies = [
     "psycopg2-binary",
     "python-dotenv",
     "Pillow",
-    "python-multipart"
+    "python-multipart",
+    "python-docx==1.1.2",
+    "PyPDF2==3.0.0"
 ]
 
 

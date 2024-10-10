@@ -20,8 +20,8 @@ def add_chat(request: AddChatRequest):
     if db_user is None:
         return {"message": f"User with id {request.user_id} does not exist."}
 
-    crud.create_chat(user_id=request.user_id, name=request.chat_name)
-    return {"message": "Chat added successfully."}
+    db_chat = crud.create_chat(user_id=request.user_id, name=request.chat_name)
+    return {"message": "Chat added successfully.", "chat_id": db_chat.id}
 
 @router.get("/chats/{user_id}")
 def read_user_chats(user_id) -> GetChatsResponse:
