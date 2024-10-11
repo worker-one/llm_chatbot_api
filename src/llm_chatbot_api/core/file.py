@@ -1,5 +1,6 @@
 from io import BytesIO
 from typing import Set
+
 import docx
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
@@ -46,22 +47,22 @@ class TextFileParser:
             raise UnexpectedFileReadingException() from e
 
     def extract_word_content(self, file: UploadFile) -> str:
-        """Extraire le contenu d'un document Word.
+        """Extract content from a Word document.
 
-        Extraire le contenu du texte des paragraphes et
-        des tableaux du document Word en conservant l'ordre des éléments.
+        Extract the text content from paragraphs and
+        tables in the Word document while preserving the order of elements.
 
         Returns:
-            Le contenu du document Word.
+            The content of the Word document.
         Raises:
-            WordFileReadingException: Erreur de lecture du document Word.
+            WordFileReadingException: Error reading the Word document.
         """
         try:
             doc = docx.Document(file.file)
             content = []
 
             for element in doc.element.body:
-                # Vérifier si l'élément est un paragraphe (CT_P)
+                # Check if the element is a paragraph (CT_P)
                 if isinstance(element, CT_P):
                     for para in doc.paragraphs:
                         if para._element == element:
@@ -70,7 +71,7 @@ class TextFileParser:
                                 content.append(paragraph_text)
                             break
 
-                # Vérifier si l'élément est un tableau (CT_Tbl)
+                # Check if the element is a table (CT_Tbl)
                 elif isinstance(element, CT_Tbl):
                     for table in doc.tables:
                         if table._element == element:
@@ -83,6 +84,7 @@ class TextFileParser:
             return '\n'.join(content)
         except Exception as e:
             raise WordFileReadingException() from e
+
 
     def extract_pdf_content(self, file: UploadFile) -> str:
         """Extract content from a PDF file.

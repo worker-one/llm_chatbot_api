@@ -81,7 +81,13 @@ async def query(
                     images.append(image)
                     logger.info(f"Received image {file.filename} from user {user_id}")
                 elif file_extension in {"pdf", "doc", "docx", "txt"}:
-                    text_content = text_file_parser.extract_content(file)
+                    uploaded_file = UploadFile(
+                        filename=file.filename,
+                        file=io.BytesIO(await file.read()),
+                        size=file.size,
+                        headers={"content-type": file.content_type}
+                    )
+                    text_content = text_file_parser.extract_content(uploaded_file)
                     texts.append(f"Document {file.filename}: {text_content}")
                     logger.info(f"Received text file {file.filename} from user {user_id}")
                 else:
