@@ -45,42 +45,44 @@ class TextFileParser:
         except Exception as e:
             raise UnexpectedFileReadingException() from e
 
-    def _extract_word_content(self, file: UploadFile) -> str:
-            """Extraire le contenu d'un document Word.
+    def extract_word_content(self, file: UploadFile) -> str:
+        """Extraire le contenu d'un document Word.
 
-            Extraire le contenu du texte des paragraphes et
-            des tableaux du document Word en conservant l'ordre des éléments.
+        Extraire le contenu du texte des paragraphes et
+        des tableaux du document Word en conservant l'ordre des éléments.
 
-            Returns:
-                Le contenu du document Word.
-            Raises:
-                WordFileReadingException: Erreur de lecture du document Word.
-            """
-            try:
-                doc = docx.Document(file.file)
-                content = []
+        Returns:
+            Le contenu du document Word.
+        Raises:
+            WordFileReadingException: Erreur de lecture du document Word.
+        """
+        try:
+            doc = docx.Document(file.file)
+            content = []
 
-                for element in doc.element.body:
-                    # Vérifier si l'élément est un paragraphe (CT_P)
-                    if isinstance(element, CT_P):
-                        for para in doc.paragraphs:
-                            if para._element == element:
-                                paragraph_text = para.text.strip()
-                                if paragraph_text:
-                                    content.append(paragraph_text)
-                                break
+            for element in doc.element.body:
+                # Vérifier si l'élément est un paragraphe (CT_P)
+                if isinstance(element, CT_P):
+                    for para in doc.paragraphs:
+                        if para._element == element:
+                            paragraph_text = para.text.strip()
+                            if paragraph_text:
+                                content.append(paragraph_text)
+                            break
 
-                    # Vérifier si l'élément est un tableau (CT_Tbl)
-                    elif isinstance(element, CT_Tbl):
-                        for table in doc.tables:
-                            if table._element == element:
-                                for row in table.rows:
-                                    row_text = '\t'.join(cell.text.strip() for cell in row.cells)
-                                    content.append(row_text)
-                                content.append('')
-                                break
+                # Vérifier si l'élément est un tableau (CT_Tbl)
+                elif isinstance(element, CT_Tbl):
+                    for table in doc.tables:
+                        if table._element == element:
+                            for row in table.rows:
+                                row_text = '\t'.join(cell.text.strip() for cell in row.cells)
+                                content.append(row_text)
+                            content.append('')
+                            break
 
-                return '\n'.join(content)
+            return '\n'.join(content)
+        except Exception as e:
+            raise WordFileReadingException() from e
 
     def extract_pdf_content(self, file: UploadFile) -> str:
         """Extract content from a PDF file.
