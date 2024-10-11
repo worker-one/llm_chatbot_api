@@ -1,7 +1,8 @@
 from io import BytesIO
 from typing import Set
-
 import docx
+from docx.oxml.table import CT_Tbl
+from docx.oxml.text.paragraph import CT_P
 from fastapi import UploadFile
 from llm_chatbot_api.utils.exceptions import (
     FileTooLargeException,
@@ -44,23 +45,42 @@ class TextFileParser:
         except Exception as e:
             raise UnexpectedFileReadingException() from e
 
-    def extract_word_content(self, file: UploadFile) -> str:
-        """Extract content from a Word document.
+    def _extract_word_content(self, file: UploadFile) -> str:
+            """Extraire le contenu d'un document Word.
 
-        Returns:
-            The content of the Word document.
+            Extraire le contenu du texte des paragraphes et
+            des tableaux du document Word en conservant l'ordre des éléments.
 
-        Raises:
-            WordFileReadingException: Error reading the Word document.
-        """
-        try:
-            content = ""
-            doc = docx.Document(file.file)
-            for paragraph in doc.paragraphs:
-                content += paragraph.text + "\n"
-            return content.strip("\n")
-        except Exception as e:
-            raise WordFileReadingException() from e
+            Returns:
+                Le contenu du document Word.
+            Raises:
+                WordFileReadingException: Erreur de lecture du document Word.
+            """
+            try:
+                doc = docx.Document(file.file)
+                content = []
+
+                for element in doc.element.body:
+                    # Vérifier si l'élément est un paragraphe (CT_P)
+                    if isinstance(element, CT_P):
+                        for para in doc.paragraphs:
+                            if para._element == element:
+                                paragraph_text = para.text.strip()
+                                if paragraph_text:
+                                    content.append(paragraph_text)
+                                break
+
+                    # Vérifier si l'élément est un tableau (CT_Tbl)
+                    elif isinstance(element, CT_Tbl):
+                        for table in doc.tables:
+                            if table._element == element:
+                                for row in table.rows:
+                                    row_text = '\t'.join(cell.text.strip() for cell in row.cells)
+                                    content.append(row_text)
+                                content.append('')
+                                break
+
+                return '\n'.join(content)
 
     def extract_pdf_content(self, file: UploadFile) -> str:
         """Extract content from a PDF file.
