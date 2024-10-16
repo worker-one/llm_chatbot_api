@@ -98,6 +98,10 @@ async def query(
 
     user_message += "\n".join(texts)
 
+    # TODO
+    if len(user_message) > 10000:
+        user_message = user_message[:10000]
+
     # add the message to the chat history if it exists
     crud.create_message(chat_id, "user", content=user_message, timestamp=datetime.now())
 
