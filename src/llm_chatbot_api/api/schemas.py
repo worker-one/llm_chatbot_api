@@ -1,6 +1,8 @@
 from datetime import datetime
 from logging import config
-from typing import Optional
+from typing import Literal, Optional
+
+from prompt_toolkit import prompt
 
 from pydantic import BaseModel, confloat, conint
 
@@ -47,9 +49,20 @@ class ModelConfig(BaseModel):
     chat_history_limit: Optional[conint(ge=0)] = None
     temperature: Optional[confloat(ge=0.0)] = None
 
+class ImageModelConfig(BaseModel):
+    model_name: Optional[str] = "dall-e-2"  # The name of the model to use for image generation
+    provider: Literal["OpenAI"] = "OpenAI"  # The provider of the model
+    n: Optional[conint(ge=0)] = 1  # Number of images to generate
+    quality: Literal["standard", "hd"] = "standard"  # The quality of the generated images
+    size: Optional[str] = "1024x1024"  # The size of the generated images
+
 class ModelResponse(BaseModel):
     response_content: str
     config: ModelConfig
+
+class ImageModelResponse(BaseModel):
+    response_content: list[dict[str, str]]
+    config: ImageModelConfig
 
 class QueryModelRequest(BaseModel):
     user_id: conint(ge=0)
@@ -61,3 +74,8 @@ class QueryModelResponse(BaseModel):
     user_id: conint(ge=0)
     chat_id: conint(ge=0)
     model_response: ModelResponse
+
+class QueryImageModelResponse(BaseModel):
+    user_id: conint(ge=0)
+    prompt: str
+    model_response: ImageModelResponse

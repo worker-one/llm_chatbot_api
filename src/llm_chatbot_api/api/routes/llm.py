@@ -31,11 +31,11 @@ router = APIRouter()
 # Initialize TextFileParser with appropriate parameters
 text_file_parser = TextFileParser(max_file_size_mb=10, allowed_file_types={"txt", "doc", "docx", "pdf"})
 
-@router.get("/model/config")
+@router.get("/config")
 def get_model_config() -> ModelConfig:
     return llm.config
 
-@router.post("/model/config")
+@router.post("/config")
 def update_model_config(request: ModelConfig):
     global llm
     try:
@@ -45,7 +45,7 @@ def update_model_config(request: ModelConfig):
         logger.error(f"Error updating model: {e}")
         return {"status": "error", "message": str(e)}
 
-@router.post("/model/query")
+@router.post("/query")
 async def query(
     user_id: str = Form(...),
     chat_id: str = Form(...),

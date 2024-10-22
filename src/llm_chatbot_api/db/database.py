@@ -1,8 +1,6 @@
 import logging.config
 import os
 
-from dotenv import find_dotenv, load_dotenv
-from omegaconf import OmegaConf
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
@@ -12,8 +10,6 @@ from .models import Base
 # Load logging configuration with OmegaConf
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-load_dotenv(find_dotenv(usecwd=True))
 
 # Retrieve environment variables
 DB_HOST = os.getenv("DB_HOST")

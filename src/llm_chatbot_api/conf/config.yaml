@@ -7,6 +7,15 @@ llm:
       max_tokens: 2500
       temperature: 0.7
       provider: "fireworksai"
+image_model:
+  config:
+    default:
+      _target_: llm_chatbot_api.api.schemas.ImageModelConfig
+      model_name: "dall-e-3"
+      provider: "OpenAI"
+      size: "1024x1024"
+      n: 1
+      quality: "standard"
 
 api:
     version: "0.1.0"

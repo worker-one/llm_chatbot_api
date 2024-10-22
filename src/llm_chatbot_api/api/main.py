@@ -1,14 +1,16 @@
 import logging
 import uvicorn
+from dotenv import find_dotenv, load_dotenv
+
 from fastapi import FastAPI
 from omegaconf import OmegaConf
-
-from llm_chatbot_api.api.routes import chats, llm, users
-from llm_chatbot_api.db.database import create_tables
 
 # Load logging configuration with OmegaConf
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Load environment variables
+load_dotenv(find_dotenv(usecwd=True))
 
 def create_app(config_path: str) -> FastAPI:
     """
@@ -23,14 +25,18 @@ def create_app(config_path: str) -> FastAPI:
 
     app = FastAPI(title=config.api.title, description=config.api.description, version=config.api.version)
 
-    app.include_router(chats.router)
-    app.include_router(users.router)
-    app.include_router(llm.router)
+    app.include_router(chats.router, prefix="/chats")
+    app.include_router(users.router, prefix="/users")
+    app.include_router(llm.router, prefix="/llm")
+    app.include_router(image.router, prefix="/image")
 
     return app
 
 
 if __name__ == "__main__":
+    from llm_chatbot_api.api.routes import chats, image, llm, users
+    from llm_chatbot_api.db.database import create_tables
+
     config_path = "src/llm_chatbot_api/conf/config.yaml"
     config = OmegaConf.load(config_path)
     create_tables()
