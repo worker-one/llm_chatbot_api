@@ -1,8 +1,5 @@
 from datetime import datetime
-from logging import config
 from typing import Literal, Optional
-
-from prompt_toolkit import prompt
 
 from pydantic import BaseModel, confloat, conint
 
